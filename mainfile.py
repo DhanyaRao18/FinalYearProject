@@ -43,31 +43,9 @@ mpHands = mp.solutions.hands
 hands = mpHands.Hands(max_num_hands=1, min_detection_confidence=0.7)
 mpDraw = mp.solutions.drawing_utils
 
-def write_points_to_file(rpoints, gpoints, bpoints, ypoints):
-    with open('points.txt', 'w') as f:
-        # Write each point list as a separate line
-        f.write(' '.join(map(str, list(rpoints))) + '\n')
-        f.write(' '.join(map(str, list(gpoints))) + '\n')
-        f.write(' '.join(map(str, list(bpoints))) + '\n')
-        f.write(' '.join(map(str, list(ypoints))) + '\n')
-
-# def read_points_from_file():
-#     with open('points.txt', 'r') as f:
-#         # Read each line and convert it back to a list of points
-#         rpoints = deque(map(int, f.readline().strip().split()))
-#         gpoints = deque(map(int, f.readline().strip().split()))
-#         bpoints = deque(map(int, f.readline().strip().split()))
-#         ypoints = deque(map(int, f.readline().strip().split()))
-
-#     return rpoints, gpoints, bpoints, ypoints
-
-
 # Initialize the webcam
 cap = cv2.VideoCapture(0)
 ret = True
-
-# # Call read_points_from_file to initialize deques with the points from the file
-# rpoints, gpoints, bpoints, ypoints = read_points_from_file()
 
 while ret:
     # Read each frame from the webcam
@@ -166,9 +144,6 @@ while ret:
         red_index += 1
         ypoints.append(deque(maxlen=512))
         yellow_index += 1
-        
-    # Write points to file after update
-    write_points_to_file(rpoints, gpoints, bpoints, ypoints)
 
     # Draw lines of all the colors on the canvas and frame
     points = [bpoints, gpoints, rpoints, ypoints]
