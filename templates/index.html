@@ -12,37 +12,36 @@
     </div>
     <div class="row">
             <img src="{{ url_for('static', filename='images/teacher-icon.png') }}" alt="Example Image">
-            <form action="/execute" method="post" id="teachingForm">
-                <button class="buttonelt" id="btn1" type="submit">Start Teaching</button>    
-            </form>
-            <form action="/download" method="get">
-                <button class="buttonelt" id="downloadButton">Download PDF</button>
-            </form> 
+            <button onclick="executeMainFile()" class="buttonelt" id="btn1" type="submit">Start Teaching</button>    
+            <button onclick="convertImageToPdf()" class="buttonelt" id="downloadButton">Download PDF</button>
     </div>
 
     <script>
-        document.getElementById('btn1').addEventListener('click', async function(event) {
-            event.preventDefault();
-            const form = document.getElementById('teachingForm');
-            const formData = new FormData(form);
-            const response = await fetch('/execute', { method: 'POST', body: formData });
-            const result = await response.text();
-            document.getElementById('result').innerText = result;
-        });
+         function executeMainFile() {
+            // Send request to Flask server to execute main file
+            fetch('/execute_main_file')
+                .then(response => response.text())
+                .then(data => console.log(data))
+                .catch(error => console.error('Error:', error));
+        }
 
-        document.getElementById('downloadButton').addEventListener('click', async function(event) {
-            event.preventDefault();
-            const response = await fetch('/download', { method: 'GET' });
-            const blob = await response.blob();
-            const url = window.URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = 'drawing.png'; // Set the filename for the downloaded file
-            document.body.appendChild(a);
-            a.click();
-            window.URL.revokeObjectURL(url);
-            document.body.removeChild(a);
-        });        
+        function convertImageToPdf() {
+            // Send request to Flask server to convert image to PDF and download
+            fetch('/convert_image_to_pdf')
+                .then(response => response.blob())
+                .then(blob => {
+                    // Create a temporary link element to trigger download
+                    const url = window.URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.style.display = 'none';
+                    a.href = url;
+                    a.download = 'output_pdf.pdf';
+                    document.body.appendChild(a);
+                    a.click();
+                    window.URL.revokeObjectURL(url);
+                })
+                .catch(error => console.error('Error:', error));
+        }     
 
     </script>
 </body>
