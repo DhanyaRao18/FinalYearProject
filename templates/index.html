@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Virtual Teaching Board</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+
+</head>
+<body>
+    <div class="header"> 
+        <h1>Virtual Teaching Board</h1>
+        <p>Start Teaching Happily!</p>
+    </div>
+    <div class="row">
+            <img src="{{ url_for('static', filename='images/teacher-icon.png') }}" alt="Example Image">
+            <form action="/execute" method="post" id="teachingForm">
+                <button class="buttonelt" id="btn1" type="submit">Start Teaching</button>    
+            </form>
+            <form action="/download" method="get">
+                <button class="buttonelt" id="downloadButton">Download PDF</button>
+            </form> 
+    </div>
+
+    <script>
+        document.getElementById('btn1').addEventListener('click', async function(event) {
+            event.preventDefault();
+            const form = document.getElementById('teachingForm');
+            const formData = new FormData(form);
+            const response = await fetch('/execute', { method: 'POST', body: formData });
+            const result = await response.text();
+            document.getElementById('result').innerText = result;
+        });
+
+        document.getElementById('downloadButton').addEventListener('click', async function(event) {
+            event.preventDefault();
+            const response = await fetch('/download', { method: 'GET' });
+            const blob = await response.blob();
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'drawing.png'; // Set the filename for the downloaded file
+            document.body.appendChild(a);
+            a.click();
+            window.URL.revokeObjectURL(url);
+            document.body.removeChild(a);
+        });        
+
+    </script>
+</body>
+</html>
